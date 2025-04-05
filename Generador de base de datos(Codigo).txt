@@ -1,0 +1,99 @@
+-- Tabla: usuarios
+CREATE TABLE usuarios (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    contraseña VARCHAR(255) NOT NULL,
+    rol VARCHAR(50) NOT NULL,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY (email)
+);
+
+-- Tabla: proveedores
+CREATE TABLE proveedores (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    contacto VARCHAR(255) NOT NULL,
+    telefono VARCHAR(15),
+    email VARCHAR(255),
+    direccion VARCHAR(255),
+    usuario_id INT(11) NOT NULL,
+    PRIMARY KEY (id),
+    KEY (usuario_id),
+    CONSTRAINT fk_proveedores_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla: productos
+CREATE TABLE productos (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    producto VARCHAR(255) NOT NULL,
+    usuario_id INT(11),
+    id_proveedor INT(11) NOT NULL,
+    cantidad INT(11) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    dni INT(11),
+    categoria VARCHAR(255) NOT NULL,
+    caracteristicas TEXT NOT NULL,
+    caracteristicas1 TEXT NOT NULL,
+    caracteristicas2 TEXT NOT NULL,
+    PRIMARY KEY (id),
+    KEY (usuario_id),
+    CONSTRAINT fk_productos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla: movimientos
+CREATE TABLE movimientos (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    producto_id INT(11),
+    usuario_id INT(11),
+    tipo VARCHAR(50) NOT NULL,
+    cantidad INT(11) NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    comentario TEXT,
+    gasto DECIMAL(10,2),
+    PRIMARY KEY (id),
+    KEY (producto_id),
+    KEY (usuario_id),
+    CONSTRAINT fk_movimientos_producto FOREIGN KEY (producto_id) REFERENCES productos(id),
+    CONSTRAINT fk_movimientos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla: ventas
+CREATE TABLE ventas (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    producto_id INT(11),
+    usuario_id INT(11),
+    cantidad INT(11) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    fecha DATE DEFAULT CURRENT_TIMESTAMP,
+    comentario TEXT,
+    PRIMARY KEY (id),
+    KEY (producto_id),
+    KEY (usuario_id),
+    CONSTRAINT fk_ventas_producto FOREIGN KEY (producto_id) REFERENCES productos(id),
+    CONSTRAINT fk_ventas_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla: tema
+CREATE TABLE tema (
+    id INT(11) NOT NULL,
+    usuario_id INT(11) NOT NULL,
+    tema INT(11) NOT NULL,
+    fuente INT(11) NOT NULL,
+    PRIMARY KEY (id, usuario_id),
+    KEY (usuario_id),
+    CONSTRAINT fk_tema_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla: usuarios_proveedores
+CREATE TABLE usuarios_proveedores (
+    usuario_id INT(11) NOT NULL,
+    proveedor_id INT(11) NOT NULL,
+    PRIMARY KEY (usuario_id, proveedor_id),
+    KEY (proveedor_id),
+    CONSTRAINT fk_up_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_up_proveedor FOREIGN KEY (proveedor_id) REFERENCES proveedores(id)
+);
